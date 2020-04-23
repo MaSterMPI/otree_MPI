@@ -11,7 +11,9 @@ class Introduction(Page):
 
 class Start(Page):
     def is_displayed(self):
-        return self.round_number == 1
+        if self.round_number == 1 or self.round_number == 2 + Constants.extra_rounds_sg1 or self.round_number == 3 + Constants.extra_rounds_sg1 + Constants.extra_rounds_sg2:
+            return True
+
 
 class Decision(Page):
     form_model = 'player'
@@ -19,24 +21,23 @@ class Decision(Page):
     pass
 
 
-
 class ResultsWaitPage(WaitPage):
     after_all_players_arrive = 'set_payoffs'
 
+
 class Period_Result(Page):
     pass
-#    def vars_for_template(self):
-#      me = self.player
-#      opponent_1 = me.other_player_1()
-#      opponent_2 = me.other_player_2()
-#       return dict(
-#           my_decision=me.decision,
-#           opponent_1_decision=opponent_1.decision,
-#           opponent_2_decision=opponent_2.decision,)
-#           #same_choice=me.decision == opponent_1.decision == opponent_2.decision,)
 
 
-class Round_Result (Page):
+class Round_Result(Page):
+    def is_displayed(self):
+        if self.round_number == 1 + Constants.extra_rounds_sg1 \
+                or self.round_number == 2 + Constants.extra_rounds_sg1 + Constants.extra_rounds_sg2 \
+                or self.round_number == 3 + Constants.extra_rounds_sg1 + Constants.extra_rounds_sg2 + Constants.extra_rounds_sg3:
+            return True
+
+
+class Final_Result(Page):
     def is_displayed(self):
         return self.round_number == Constants.num_rounds
 
@@ -48,4 +49,4 @@ class Round_Result (Page):
         return {"round_payoff": round_payoff}
 
 
-page_sequence = [Introduction,Start,Decision, ResultsWaitPage, Period_Result, Round_Result]
+page_sequence = [Introduction, Start, Decision, ResultsWaitPage, Period_Result, Round_Result, Final_Result]

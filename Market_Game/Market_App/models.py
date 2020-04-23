@@ -21,6 +21,12 @@ Econometrica: Journal of the Econometric Society, 343-371."
 class Constants(BaseConstants):
     players_per_group = 3
     name_in_url = 'market_game'
+
+#Ex ante drawm extra periods
+    extra_rounds_sg1 = 1
+    extra_rounds_sg2 = 2
+    extra_rounds_sg3 = 1
+
     num_rounds = 3
 
 
@@ -39,14 +45,30 @@ class Constants(BaseConstants):
     player_low_lll_payoff = c(480)
 
 class Subsession(BaseSubsession):
-   #  def get_player_by_id(self):
-    #    if self.round_number ==1:
-    #        player1 = self.get_player_by_id_(1)
-    #        player2 = self.get_player_by_id_(2)
-    #        player3 = self.get_player_by_id_(3)
-    #    else:
-    #        self.group_like_round(1)
-    pass
+
+    # matching subjects to random groups
+    def creating_session(self):
+        if self.round_number == 1:
+            self.group_randomly(fixed_id_in_group= True)
+        elif self.round_number < 2 + Constants.extra_rounds_sg1:
+            self.group_like_round(1)
+        elif self.round_number == 2 + Constants.extra_rounds_sg1:
+            self.group_randomly(fixed_id_in_group=True)
+        elif self.round_number < 3 + Constants.extra_rounds_sg1 + Constants.extra_rounds_sg2:
+            self.group_like_round(2 + Constants.extra_rounds_sg1)
+        elif self.round_number == 3 + Constants.extra_rounds_sg1 + Constants.extra_rounds_sg2:
+            self.group_randomly(fixed_id_in_group=True)
+        else:
+            self.group_like_round(5)
+
+# This is a test for a new data variable, but I am not sure if it will be stored in the data (I couldn't find it in the test data)
+    def supergame(self):
+        if self.round_number < 2 + Constants.extra_rounds_sg1:
+            return 1
+        elif self.round_number < 3 + Constants.extra_rounds_sg1 + Constants.extra_rounds_sg2:
+            return 2
+        elif self.round_number > 3 + Constants.extra_rounds_sg1 + Constants.extra_rounds_sg2:
+            return 3
 
 class Group(BaseGroup):
 
